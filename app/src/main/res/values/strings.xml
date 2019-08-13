@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">WeatherBroadcast</string>
+    <string name="wind_night">夜晚风力：</string>
+</resources>
