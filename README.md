@@ -1,7 +1,6 @@
 # Weather
 之所以写这个应用，主要是为了学习Retrofit的网络请求，然后数据请求方是聚合科技的天气请求
-## 给聚合科技打一波广告（自来水）
-作为网上非常容易获取到的数据，而且里面api接口很多是免费的，也有测试案例，清晰明了。
+
 ## 里面主要的几个类：
 一个是我的MainActivity，一个是Retrofit请求的接口WeatherService，一个是我的Javabean类Weather，里面解析了聚合科技的天气格式。
 剩下一个是我使用RecyclerView的adapter类，里面把未来天气进行了一个布局。
@@ -18,5 +17,8 @@ Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create()) //设置数据解析器
                 .build();
 ```
-之后就与网上的Retrofit请求一样了，我这也不过多的讲，可以参考下面的链接。
-https://blog.csdn.net/carson_ho/article/details/73732076
+
+25日更新
+今天发现这个应用在模拟器上运行ok，但是在手机上却一直没反应，经过调查分析，发现这个问题应该应该有一部分是因为URL的中文解析问题，这里的中文解析默认是utf-8的，但我在代码中使用URLEncoder.encode(str,"utf-8")时，原先在模拟器上可以请求网络的app，反而请求失败了，原因是因为不支持该地名。
+这里问题就来了，在网页请求中，中文的编码默认是utf-8，我提前将中文以utf-8的格式编码，并以get请求发出去，返回值竟然说不支持该地名，是因为我提前给它编码了，所有对方服务器不会再次对其解码么？
+这个问题待解决
