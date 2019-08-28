@@ -1,5 +1,6 @@
 package com.shen.weatherbroadcast;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -29,12 +30,15 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+@RuntimePermissions
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     static String key = "e16c03e5d6d233c14faf466ff01007cc";
 
@@ -58,16 +62,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView realtimeDirection;
     @BindView(R.id.realtime_wind_force)
     TextView realtimeWindForce;
-    @BindView(R.id.btn_volley_quest)
-    Button btnVolleyQuest;
 
+    @NeedsPermission({Manifest.permission.INTERNET})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ButterKnife.bind(this);
         btnQuestForWeather.setOnClickListener(this);
-        btnVolleyQuest.setOnClickListener(this::onClick);
 
     }
 
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
                 WeatherService service = retrofit.create(WeatherService.class);
-                String city = editText.getText().toString().trim();
+                String city =  editText.getText().toString().trim();
                 Call<Weather> call = service.getWeather(city, key);
                 call.enqueue(new Callback<Weather>() {
                     @Override
@@ -96,22 +99,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Log.d("request", " failed");
                     }
                 });
-                break;
-            case R.id.btn_volley_quest:
-                RequestQueue requestQueue = Volley.newRequestQueue(this);
-                String url = "http://apis.juhe.cn/simpleWeather/query key="+key+"city="+editText.getText().toString().trim();
-                StringRequest request = new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    textView.setText(response.substring(0, 20));
-                    Log.d("Volley", "successed");
-                }
-            }, new com.android.volley.Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    textView.setText("error");
-                }
-            });
                 break;
         }
     }
